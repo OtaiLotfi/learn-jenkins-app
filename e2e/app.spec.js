@@ -5,7 +5,7 @@ test('has title', async ({ page }) => {
   await page.goto('/');
 
   // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Learn Jenkins/);
+  await expect(page).toHaveTitle(/OTAI DevOps/);
 });
 
 test('has Jenkins in the body', async ({ page }) => {
