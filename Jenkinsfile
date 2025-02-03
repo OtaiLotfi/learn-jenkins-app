@@ -1,9 +1,11 @@
 pipeline {
     agent any
+    
     environment{
         NETLIFY_SITE_ID = '87c36ae9-c978-40dc-9fde-2bf912b18be8'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
     }
+
     stages {
         stage('Build') {
             agent{
@@ -24,7 +26,9 @@ pipeline {
             }
         }
 
-        stage('Test') {
+stage('Tests') {
+    parallel {
+        stage('OTAI-Unit Tests') {
             agent{
                 docker{
                     image 'node:18-alpine'
@@ -38,7 +42,39 @@ pipeline {
                 npm test
                 '''
             }
+            post{
+              always{
+                   junit 'test-results/junit.xml'
+                }
+           }
         }
+
+        stage('OTAI-E2E Tests') {
+            agent{
+                docker{
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    reuseNode true
+                }
+            }
+
+            steps{
+                sh '''
+                npm install serve
+                node_modules/.bin/serve -s build &
+                sleep 10
+                npx playwright test --reporter=html
+                '''
+            }
+
+            post{
+              always{
+                   publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report'])
+                }
+           }
+        }
+    }
+}
+
 
     stage('Deploy') {
             agent{
@@ -56,14 +92,6 @@ pipeline {
                     node_modules/.bin/netlify deploy --dir=build --prod
                 '''
             }
-        }
-
-
-    }
-
-    post{
-        always{
-            junit 'test-results/junit.xml'
         }
     }
 }
