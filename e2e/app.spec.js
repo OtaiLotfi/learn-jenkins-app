@@ -11,7 +11,7 @@ test('has title', async ({ page }) => {
 test('has Jenkins in the body', async ({ page }) => {
   await page.goto('/');
 
-  const isVisible = await page.locator('a:has-text("Learn Jenkins on Udemy")').isVisible();
+  const isVisible = await page.locator('a:has-text("OTAI DevOps Jenkins")').isVisible();
   expect(isVisible).toBeTruthy();
 });
 
