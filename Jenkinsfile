@@ -63,11 +63,6 @@ stage('Tests') {
                 '''
             }
 
-            post{
-              always{
-                   publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report'])
-                }
-           }
         }
     }
 }
