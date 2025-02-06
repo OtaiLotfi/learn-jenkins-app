@@ -66,11 +66,20 @@ stage('Tests') {
                 '''
             }
 
-            post{
-              always{
-                   publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report'])
-                }
-           }
+post {
+    always {
+        script {
+            publishHTML([
+                allowMissing: false,
+                alwaysLinkToLastBuild: false,
+                keepAll: false,
+                reportDir: 'playwright-report',
+                reportFiles: 'index.html',  
+                reportName: 'Playwright Test Report'
+            ])
+        }
+    }
+}
         }
     }
 }
