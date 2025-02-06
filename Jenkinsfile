@@ -1,6 +1,6 @@
 pipeline {
     agent any
-
+    
     environment{
         NETLIFY_SITE_ID = '87c36ae9-c978-40dc-9fde-2bf912b18be8'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
@@ -60,9 +60,17 @@ stage('Tests') {
             steps{
                 sh '''
                 npm install serve
+                node_modules/.bin/serve -s build &
+                sleep 10
+                npx playwright test --reporter=html
                 '''
             }
 
+            post{
+              always{
+                   publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report'])
+                }
+           }
         }
     }
 }
