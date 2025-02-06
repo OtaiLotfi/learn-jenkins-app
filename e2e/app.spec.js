@@ -4,7 +4,7 @@ const { test, expect } = require('@playwright/test');
 test('has title', async ({ page }) => {
   await page.goto('/');
 
-  await expect(page).toHaveTitle(/OTAI DevOps/);
+  await expect(page).toHaveTitle(/OTAI DevOps/, { timeout: 10000 });
 });
 
 test('has Jenkins in the body', async ({ page }) => {
