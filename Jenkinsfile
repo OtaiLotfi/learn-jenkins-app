@@ -26,67 +26,67 @@ pipeline {
             }
         }
 
-stage('Tests') {
-    parallel {
-        stage('OTAI-Unit Test') {
-            agent{
-                docker{
-                    image 'node:18-alpine'
-                    reuseNode true
+        stage('Tests') {
+            parallel {
+                stage('OTAI-Unit Test') {
+                    agent{
+                        docker{
+                            image 'node:18-alpine'
+                            reuseNode true
+                        }
+                    }
+
+                    steps{
+                        sh '''
+                        test -f build/index.html
+                        npm test
+                        '''
+                    }
+                    post{
+                        always{
+                            junit 'test-results/junit.xml'
+                        }
+                    }
+                }
+
+                stage('OTAI-E2E Tests') {
+                    agent{
+                        docker{
+                            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                            reuseNode true
+                        }
+                    }
+
+                    steps{
+                        sh '''
+                        npm install serve
+                        node_modules/.bin/serve -s build &
+                        sleep 10
+                        rm -rf playwright-report
+                        npx playwright test --reporter=html
+                        ls -la playwright-report
+                        '''
+                    }
+
+                    post {
+                        always {
+                            script {
+                                publishHTML([
+                                    allowMissing: false,
+                                    alwaysLinkToLastBuild: true,
+                                    keepAll: true,
+                                    reportDir: 'playwright-report',  
+                                    reportFiles: 'index.html',  
+                                    reportName: 'OTAI Playwright Test Report'
+                                ])
+                            }
+                        }
+                    }
                 }
             }
-
-            steps{
-                sh '''
-                test -f build/index.html
-                npm test
-                '''
-            }
-            post{
-              always{
-                   junit 'test-results/junit.xml'
-                }
-           }
         }
 
-        stage('OTAI-E2E Tests') {
-    agent{
-        docker{
-            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
-            reuseNode true
-        }
-    }
-
-    steps {
-        sh '''
-        npm install serve
-        node_modules/.bin/serve -s build &
-        sleep 10
-        npx playwright test --reporter=html
-        unzip -o playwright-report.zip -d playwright-report || true
-        '''
-    }
-
-    post {
-        always {
-            script {
-                publishHTML([
-                    allowMissing: false,
-                    alwaysLinkToLastBuild: false,
-                    keepAll: true,
-                    reportDir: 'playwright-report',
-                    reportFiles: 'index.html',
-                    reportName: 'OTAI Playwright Test Report'
-                ])
-            }
-        }
-    }
-}
-    }
-}
-
-
-    stage('Deploy') {
+        stage('Deploy') {
             agent{
                 docker{
                     image 'node:18-alpine'
@@ -95,11 +95,11 @@ stage('Tests') {
             }
             steps {
                 sh '''
-                    npm install netlify-cli 
-                    node_modules/.bin/netlify --version
-                    echo "Deploying to production. Site ID: $NETLIFY_SITE_ID"
-                    node_modules/.bin/netlify status
-                    node_modules/.bin/netlify deploy --dir=build --prod
+                npm install netlify-cli 
+                node_modules/.bin/netlify --version
+                echo "Deploying to production. Site ID: $NETLIFY_SITE_ID"
+                node_modules/.bin/netlify status
+                node_modules/.bin/netlify deploy --dir=build --prod
                 '''
             }
         }
