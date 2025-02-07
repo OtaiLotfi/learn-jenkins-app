@@ -75,7 +75,7 @@ post {
                 keepAll: false,
                 reportDir: 'playwright-report',
                 reportFiles: 'index.html',  
-                reportName: 'Playwright Test Report'
+                reportName: 'OTAI Playwright Test Report'
             ])
         }
     }
