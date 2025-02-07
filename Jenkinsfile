@@ -71,9 +71,9 @@ pipeline {
                         always {
                             script {
                                 allure([
-                                    results: [[path: 'allure-results']],  
-                                    reportDirectory: 'allure-report',   
-                                    reportTitle: 'OTAI Playwright Test Report'
+                                    allureResults: [[path: 'allure-results']],  
+                                    reportDir: 'allure-report',   
+                                    reportName: 'OTAI Playwright Test Report'
                                 ])
                             }
                         }
