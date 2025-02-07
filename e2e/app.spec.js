@@ -7,7 +7,7 @@ test('has title', async ({ page }) => {
   await expect(page).toHaveTitle(/OTAI DevOps/, { timeout: 10000 });
 });
 
-test('has Jenkins in the body', async ({ page }) => {
+test('has OTAI DevOps in the body', async ({ page }) => {
   await page.goto('/');
 
   const isVisible = await page.locator('a:has-text("OTAI DevOps Jenkins")').isVisible();

@@ -37,7 +37,7 @@ module.exports = defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
+      name: 'OTAI Playwright E2E Tests', 
       use: { ...devices['Desktop Chrome'] },
     },
 
