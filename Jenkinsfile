@@ -49,38 +49,36 @@ stage('Tests') {
            }
         }
 
-        stage('OTAI-E2E Tests') {
-            agent{
-                docker{
-                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
-                    reuseNode true
-                }
-            }
+stage('OTAI-E2E Tests') {
+    agent {
+        docker {
+            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+            reuseNode true
+        }
+    }
 
-            steps{
-                sh '''
-                npm install serve
-                node_modules/.bin/serve -s build &
-                sleep 10
-                npx playwright test --reporter=html
-                '''
-            }
+    steps {
+        sh '''
+        npm install serve
+        node_modules/.bin/serve -s build &
+        sleep 10
+        npx playwright test --reporter=allure-playwright
+        '''
+    }
 
-post {
-    always {
-        script {
-            publishHTML([
-                allowMissing: false,
-                alwaysLinkToLastBuild: false,
-                keepAll: false,
-                reportDir: 'playwright-report',
-                reportFiles: 'index.html',  
-                reportName: 'OTAI Playwright Test Report'
-            ])
+    post {
+        always {
+            script {
+                allure([
+                    results: [[path: 'allure-results']],
+                    reportDir: 'allure-report',
+                    reportName: 'OTAI Playwright Test Report'
+                ])
+            }
         }
     }
 }
-        }
+
     }
 }
 
