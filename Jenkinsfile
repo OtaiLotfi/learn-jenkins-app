@@ -1,7 +1,7 @@
 pipeline {
     agent any
-    
-    environment{
+
+    environment {
         NETLIFY_SITE_ID = '87c36ae9-c978-40dc-9fde-2bf912b18be8'
         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
     }
@@ -59,8 +59,8 @@ pipeline {
 
                     steps {
                         sh '''
+                        npm install allure-playwright
                         npm install serve
-                        npm install --save-dev allure-playwright
                         node_modules/.bin/serve -s build &
                         sleep 10
                         npx playwright test --reporter=allure-playwright
@@ -71,9 +71,9 @@ pipeline {
                         always {
                             script {
                                 allure([
-                                    results: [[path: 'allure-results']],
-                                    reportDir: 'allure-report',
-                                    reportName: 'OTAI Playwright Test Report'
+                                    results: [[path: 'allure-results']],  
+                                    reportDirectory: 'allure-report',   
+                                    reportTitle: 'OTAI Playwright Test Report'
                                 ])
                             }
                         }
