@@ -52,7 +52,7 @@ pipeline {
                 stage('OTAI-E2E Tests') {
                     agent{
                         docker{
-                            image 'mcr.microsoft.com/playwright:latest'
+                            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
                             reuseNode true
                         }
                     }
