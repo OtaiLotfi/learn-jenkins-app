@@ -26,7 +26,7 @@ pipeline {
             }
         }
 
-        stage('Tests') {
+        stage('OTAI Tests') {
             parallel {
                 stage('OTAI-Unit Test') {
                     agent{
